@@ -18,7 +18,7 @@ fragments for use with a booted server
 
 SynthDef(\feedback_looper, {
 
-	arg input, bufnum, t_reset = 1;
+	arg input = 0, bufnum, t_reset = 1;
 
 	// variables for the existing signal in the loop, the new input,
 	// the output signal and the recording head position
@@ -45,7 +45,7 @@ SynthDef(\feedback_looper, {
 SynthDef(\feedback_scroller,
 	{
 		|
-		out      = 1,
+		out      = 0,
 		buffer   = 0,
 		envbuf   = -1,
 		pointer  = 0,
@@ -56,7 +56,7 @@ SynthDef(\feedback_scroller,
 		var  outsig;
 
 		outsig = Warp1.ar(
-			numChannels:1,
+			numChannels:2,
 			bufnum:buffer,
 			pointer:pointer,
 			freqScale:pitch,
@@ -80,7 +80,8 @@ SynthDef(\feedback_buffer, {
 
 	var input;
 
-	input = SoundIn.ar(sound_in);
+	// supposed to read the actual input
+	input = In.ar(sound_in);
 	RecordBuf.ar(input, bufnum);
 
 }).add;
@@ -101,7 +102,7 @@ SynthDef(\feedback_buffer, {
 
 ~mouse   = {
 	Out.kr(~tmp_BUS.index,   MouseX.kr(0.01,4));
-	Out.kr(~tmp_BUS.index+1, MouseY.kr(0.01,2));
+	Out.kr(~tmp_BUS.index+1, MouseY.kr(0.001,2));
 }.play;
 
 
@@ -120,16 +121,18 @@ SynthDef(\feedback_buffer, {
 if(~input_GROUP!=nil,
 	{
 
-		~feedback_BUFFER = Buffer.alloc(s, 44100 * 2, 1); // a four second 1 channel Buffer
+		~feedback_BUFFER = Buffer.alloc(s, 44100 * 2, 2); // a four second 1 channel Buffer
+
 		~feedback_loop   = Synth.new(\feedback_looper,  [
-			\input, 9,
+			\input, s.options.numOutputBusChannels,
 			\buffnum, ~feedback_BUFFER.bufnum],
 		target:~input_GROUP);
-		~feedback_loop.set(\t_reset,1);
 
 
 		~feedback_helper =Synth.new(\feedback_buffer,
 			[
+							\sound_in, s.options.numOutputBusChannels,
+
 				\out, 0,
 				\bufnum, ~feedback_BUFFER.bufnum
 		],  target:~input_GROUP);
