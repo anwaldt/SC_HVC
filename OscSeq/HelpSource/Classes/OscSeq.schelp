@@ -1,0 +1,80 @@
+TITLE:: OscSeq
+summary:: A sequencer for OSC messages.
+categories:: Undocumented classes
+related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff, etc.
+
+DESCRIPTION::
+A sequencer for OSC messages. It receives messages received via OSC
+and makes them
+
+
+CLASSMETHODS::
+
+METHOD:: new
+Create a new OscSeq object.
+
+ARGUMENT:: path
+The OSC path to listen to.
+
+ARGUMENT:: bus
+The bus to automate with the object.
+
+
+ARGUMENT:: index
+If the message has multiple arguments, 
+one needs to be chosen by the index. 
+
+returns:: (describe returnvalue here)
+
+
+INSTANCEMETHODS::
+
+METHOD:: play
+Plays the complete sequence and writes
+the data to the assigned bus.
+
+ARGUMENT:: bus
+The bus (index) to write the automation data to.
+
+returns::
+
+METHOD:: record
+Start or stop the recording.
+
+ARGUMENT:: a
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: init
+(describe method here)
+
+ARGUMENT:: p
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+
+EXAMPLES::
+
+code::
+
+	// create new sequencer
+	x = OscSeq('/position');
+
+    // start recording
+	x.record(1);
+
+    // stop recording
+	x.record(0);
+
+    // clear all recorded values
+	x.clear;
+
+    b = Bus.control(2,1);
+
+    // play sequence once, and map the third parameter to
+	x.play(b,3);
+
+
+::
