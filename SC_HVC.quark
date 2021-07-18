@@ -1,0 +1,8 @@
+(
+    \name:    "SC_HVC",
+    \path:    "SC_HVC",
+    \summary: "Collection of random helpers.",
+    \author:  "contact@hvc.berlin",
+    \url:     "https://github.com/anwaldt/SC_HVC",
+    \since:   "2021"
+)
