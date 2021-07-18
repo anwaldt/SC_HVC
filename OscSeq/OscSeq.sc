@@ -27,7 +27,6 @@ OscSeq {
 
 	init { | p, b, i|
 
-		//test_BUS   = Bus.control(s,1);
 		val_list   = List.new;
 		do_send    = false;
 		do_record  = false;
@@ -42,20 +41,27 @@ OscSeq {
 
 			{ arg msg, time, addr, recvPort;
 
-
-
 				var val;
 
 				msg.removeAt(0);
 				val = msg[index];
 				bus.set(val);
 
+				// if recording is inactive: clear all
+				if(do_record==false,
+					{
+						val_list.clear;
+						do_record=true;
+				});
+
 
 				if(do_record==true,{
 
 					val_list.add([Main.elapsedTime-timeOffset, msg]);
 
-					// [index].postln;
+					[Main.elapsedTime-timeOffset, msg].postln;
+
+					bus.set(val);
 				});
 
 		}, path);
@@ -99,32 +105,63 @@ OscSeq {
 	// play the sequence once
 	////////////////////////////////////////////////////
 
-	play {
 
-		do_play    = false;
-		do_record  = false;
-		do_play    = true;
 
-		if(val_list.size > 1, {
+	play { |cmd, bus, index|
+
+		if(cmd==1,
 			{
+				do_play    = false;
+				do_record  = false;
+				do_play    = true;
 
-				for(1,val_list.size-1,
-					{   arg i;
+				if(val_list.size > 1, {
+					{
 
-						var val, t_wait;
+						for(1,val_list.size-1,
+							{   arg i;
 
-						t_wait = val_list[i][0]-val_list[i-1][0];
-						t_wait.wait;
+								var val, t_wait;
 
-						val = val_list[i][1][index];
-						bus.set(val);
-						// index.postln;
-					}
-				);
+								t_wait = val_list[i][0]-val_list[i-1][0];
+								t_wait.wait;
 
-			}.fork;
-		})
+								val = val_list[i][1][index];
+								bus.set(val);
+							}
+						);
+
+					}.fork;
+				});
+		});
 	}
+
+	////////////////////////////////////////////////////
+	// dump
+	////////////////////////////////////////////////////
+	/*		dump {
+
+
+	if(val_list.size > 1, {
+	{
+
+	for(1,val_list.size-1,
+	{   arg i;
+
+	var val, t_wait;
+
+	t_wait = val_list[i][0]-val_list[i-1][0];
+	t_wait.wait;
+
+	val = val_list[i][1][index];
+	bus.set(val);
+
+	}
+	);
+
+	}.fork;
+	})
+	}*/
 
 }
 
